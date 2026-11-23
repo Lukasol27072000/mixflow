@@ -366,7 +366,7 @@
     list.unshift(item);putSaved(list);renderSaved();
   }
   function makeId(){return (window.crypto&&crypto.randomUUID)?crypto.randomUUID():"sc-"+Date.now()+"-"+Math.floor(Math.random()*100000);}
-  function csvCell(v){var s=String(v===null||v===undefined?"":v);if(/^[=+\-@]/.test(s))s="'"+s;if(/[;"\r\n]/.test(s))s='"'+s.replace(/"/g,'""')+'"';return s;}
+  function csvCell(v){var s=String(v===null||v===undefined?"":v);if(/^[=+@]/.test(s)||(/^-(?!\d+(?:[.,]\d+)?$)/.test(s)))s="'"+s;if(/[;"\r\n]/.test(s))s='"'+s.replace(/"/g,'""')+'"';return s;}
   function csvNumber(v){return Number.isFinite(v)?v.toFixed(2).replace(".",","):"";}
   function exportCsv(){
     if(!current){alert("Сначала исправьте ошибки в расчёте.");return;}
