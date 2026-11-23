@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://marzhachek.onrender.com/sitemap.xml
