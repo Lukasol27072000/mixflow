@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f7fb">
+  <meta name="description" content="Бесплатный калькулятор чистой прибыли для продавцов смартфонов и электроники. Сравните наличные, эквайринг и оплату частями при одной цене продажи.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="МаржаЧек — сколько остаётся с продажи">
+  <meta property="og:description" content="Посчитайте чистую прибыль после закупки, комиссий, налогов и дополнительных расходов.">
+  <title>МаржаЧек — калькулятор чистой прибыли</title>
+  <style>
+    :root{color-scheme:light;--bg:#f6f7fb;--surface:#fff;--ink:#17243b;--muted:#68758b;--line:#e4e8f0;--blue:#315fe8;--blue-dark:#2349c2;--blue-soft:#edf2ff;--green:#16865a;--green-soft:#eaf7f0;--red:#c34b4b;--red-soft:#fff0ef;--amber:#94651a;--amber-soft:#fff7e8;--shadow:0 14px 40px rgba(26,43,75,.07);--radius:18px}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    a{color:var(--blue);text-decoration:none}
+    a:hover{text-decoration:underline}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .wrap{width:min(1160px,calc(100% - 36px));margin:0 auto}
+    header{position:sticky;top:0;z-index:20;background:rgba(246,247,251,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(228,232,240,.85)}
+    .nav{height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:850;font-size:19px;letter-spacing:-.04em}
+    .brand-mark{width:32px;height:32px;border-radius:10px;background:var(--blue);color:#fff;display:grid;place-items:center;box-shadow:0 5px 12px rgba(49,95,232,.22)}
+    .brand-mark svg{width:18px;height:18px}
+    .navlinks{display:flex;gap:22px;align-items:center;font-size:13px;font-weight:650;color:var(--muted)}
+    .navlinks a{color:inherit}
+    .navlinks a:hover{color:var(--blue);text-decoration:none}
+    .hero{padding:54px 0 30px;max-width:850px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .dot{width:7px;height:7px;border-radius:50%;background:#37a878}
+    h1{font-size:clamp(32px,5vw,54px);line-height:1.04;letter-spacing:-.055em;margin:15px 0 15px;max-width:820px}
+    .hero p{font-size:17px;color:var(--muted);max-width:720px;margin:0}
+    .hero-note{display:inline-flex;align-items:center;gap:8px;margin-top:19px;padding:8px 12px;border-radius:999px;background:var(--blue-soft);color:#294dbb;font-size:12px;font-weight:650}
+    .layout{display:grid;grid-template-columns:minmax(0, .92fr) minmax(0,1.08fr);gap:20px;align-items:start}
+    .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .panel-head{padding:22px 22px 0}
+    .panel-head h2{font-size:18px;letter-spacing:-.025em;margin:0}
+    .panel-head p{font-size:12px;color:var(--muted);margin:5px 0 0}
+    .panel-body{padding:20px 22px 22px}
+    .section-label{font-size:10px;font-weight:800;color:#7a879a;letter-spacing:.12em;text-transform:uppercase;margin:22px 0 11px}
+    .section-label:first-child{margin-top:0}
+    .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .field{min-width:0}
+    .field.full{grid-column:1/-1}
+    label{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px;font-weight:700;color:#33415a;margin-bottom:6px}
+    .hint{font-size:10px;font-weight:500;color:#8a96a8}
+    .input-wrap{position:relative}
+    input[type="text"],input[type="number"],select{width:100%;height:42px;border:1px solid #dfe4ed;border-radius:10px;padding:0 12px;background:#fff;color:var(--ink);outline:none;transition:border .15s,box-shadow .15s}
+    input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(49,95,232,.12)}
+    input::placeholder{color:#aab3c2}
+    .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:#8a96a8;pointer-events:none}
+    .with-suffix{padding-right:38px!important}
+    .segmented{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:#f0f2f7;border-radius:11px;padding:4px}
+    .segmented button{border:0;background:transparent;color:var(--muted);padding:8px 10px;border-radius:8px;font-size:11px;font-weight:700}
+    .segmented button.active{background:#fff;color:var(--blue);box-shadow:0 1px 4px rgba(20,35,65,.12)}
+    .fee-list{display:grid;gap:9px}
+    .fee-row{display:grid;grid-template-columns:1fr 108px;gap:12px;align-items:center;padding:11px 12px;border:1px solid var(--line);border-radius:12px}
+    .fee-name{font-size:12px;font-weight:700}
+    .fee-description{font-size:10px;color:var(--muted);margin-top:2px}
+    .fee-input{position:relative}
+    .fee-input input{height:36px;padding-right:28px;text-align:right;font-size:12px;font-weight:700}
+    .fee-input span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#8a96a8}
+    .actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:19px}
+    .btn{border:1px solid transparent;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:750;transition:transform .12s,background .12s}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:var(--blue);color:#fff}
+    .btn-primary:hover{background:var(--blue-dark)}
+    .btn-secondary{background:#fff;border-color:var(--line);color:#42506a}
+    .btn-secondary:hover{background:#f7f8fb}
+    .btn-quiet{background:transparent;color:var(--muted);padding-inline:9px}
+    .btn-small{padding:7px 9px;font-size:11px}
+    .results-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .live{font-size:10px;color:var(--green);font-weight:800;display:flex;align-items:center;gap:6px}
+    .live:before{content:"";width:6px;height:6px;border-radius:50%;background:#27a56d}
+    .profit-summary{margin-top:18px;padding:19px;border-radius:15px;background:linear-gradient(135deg,#172b51,#234783);color:#fff;position:relative;overflow:hidden}
+    .profit-summary:after{content:"";position:absolute;width:180px;height:180px;border:1px solid rgba(255,255,255,.1);border-radius:50%;right:-60px;top:-95px;box-shadow:0 0 0 22px rgba(255,255,255,.025),0 0 0 45px rgba(255,255,255,.02)}
+    .summary-caption{font-size:11px;color:#c5d4f1}
+    .summary-value{font-size:clamp(28px,4vw,38px);font-weight:850;letter-spacing:-.045em;line-height:1.2;margin:6px 0 2px;position:relative;z-index:1}
+    .summary-sub{font-size:11px;color:#c5d4f1;position:relative;z-index:1}
+    .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}
+    .summary-metric{padding:11px 12px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.09);border-radius:10px}
+    .summary-metric span{display:block;font-size:10px;color:#c5d4f1}
+    .summary-metric strong{display:block;font-size:15px;margin-top:3px}
+    .scenario-list{display:grid;gap:9px;margin-top:14px}
+    .scenario{border:1px solid var(--line);border-radius:13px;padding:14px}
+    .scenario.best{border-color:#b8e1cd;background:#f8fcf9}
+    .scenario-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .scenario-title{font-size:13px;font-weight:800}
+    .scenario-fee{font-size:10px;color:var(--muted);margin-top:2px}
+    .best-tag{font-size:9px;font-weight:800;color:var(--green);background:var(--green-soft);padding:4px 7px;border-radius:99px;white-space:nowrap}
+    .scenario-profit{font-size:22px;font-weight:850;letter-spacing:-.035em;margin:11px 0 9px}
+    .scenario-profit.negative{color:var(--red)}
+    .scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .scenario-grid div{padding-top:8px;border-top:1px solid var(--line)}
+    .scenario-grid span{display:block;font-size:9px;color:var(--muted)}
+    .scenario-grid strong{display:block;font-size:11px;margin-top:2px}
+    .scenario-foot{font-size:10px;color:var(--muted);margin-top:9px}
+    .error-box{margin-top:12px;padding:11px 12px;background:var(--red-soft);border:1px solid #f4d4d1;color:#9f3939;border-radius:10px;font-size:11px;display:none}
+    .result-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px}
+    .result-actions .muted{font-size:10px;color:var(--muted)}
+    .saved{margin-top:20px}
+    .saved-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .saved-head h3{font-size:14px;margin:0}
+    .saved-list{display:grid;gap:7px;margin-top:10px}
+    .saved-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:1px solid var(--line);border-radius:10px}
+    .saved-item-main{min-width:0}
+    .saved-item-name{font-size:11px;font-weight:750;overflow-wrap:anywhere}
+    .saved-item-meta{font-size:10px;color:var(--muted)}
+    .saved-item-actions{display:flex;gap:4px;flex-shrink:0}
+    .icon-btn{width:29px;height:29px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#65738a;font-size:12px}
+    .icon-btn:hover{color:var(--blue);border-color:#b9c8f6}
+    .empty{font-size:11px;color:var(--muted);padding:13px;border:1px dashed var(--line);border-radius:10px;margin-top:10px}
+    .content-section{padding:66px 0 0}
+    .content-section h2{font-size:clamp(23px,3vw,32px);letter-spacing:-.04em;margin:0 0 12px}
+    .content-section .intro{color:var(--muted);max-width:760px;margin:0 0 22px}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+    .info-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+    .info-card .num{font-size:10px;color:var(--blue);font-weight:850;letter-spacing:.1em}
+    .info-card h3{font-size:14px;margin:9px 0 6px}
+    .info-card p{font-size:12px;color:var(--muted);margin:0}
+    .formula{background:#17243b;color:#e8eefb;border-radius:15px;padding:20px 22px;margin-top:16px;overflow:auto}
+    .formula p{font-size:12px;color:#c8d3e8;margin:0 0 9px}
+    .formula code{display:block;font:12px/1.9 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:nowrap}
+    .faq-list{display:grid;gap:8px;max-width:850px}
+    details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+    summary{cursor:pointer;font-size:13px;font-weight:750}
+    details p{font-size:12px;color:var(--muted);margin:10px 0 0}
+    .disclaimer{margin-top:18px;padding:14px 16px;border-radius:12px;background:var(--amber-soft);border:1px solid #f0dfbd;color:#76551d;font-size:11px}
+    footer{margin-top:70px;border-top:1px solid var(--line);padding:25px 0 35px}
+    .footer-inner{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
+    .footer-copy{font-size:10px;color:var(--muted)}
+    .footer-links{display:flex;gap:16px;font-size:11px;font-weight:650}
+    .footer-links a{color:#58667d}
+    .privacy-note{font-size:12px;color:var(--muted);max-width:780px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:850px){.layout{grid-template-columns:1fr}.hero{padding-top:40px}.info-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:560px){.wrap{width:min(100% - 24px,1160px)}.nav{height:60px}.navlinks{gap:12px;font-size:11px}.navlinks a:nth-child(2){display:none}.hero{padding:34px 0 23px}.hero p{font-size:14px}.panel-head{padding:18px 16px 0}.panel-body{padding:17px 16px 18px}.field-grid{gap:11px}.fee-row{grid-template-columns:1fr 92px}.summary-grid{gap:7px}.scenario-grid{gap:6px}.scenario-grid strong{font-size:10px}.info-grid{grid-template-columns:1fr}.content-section{padding-top:50px}.footer-inner{align-items:flex-start;flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
+  </style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"МаржаЧек","applicationCategory":"FinanceApplication","operatingSystem":"Any","inLanguage":"ru","description":"Бесплатный калькулятор чистой прибыли с продажи смартфонов и электроники."}
+  </script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="МаржаЧек — на главную">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 16.5 9.2 11l4 3.2L20 6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      МаржаЧек
+    </a>
+    <nav class="navlinks" aria-label="Основная навигация">
+      <a href="#calculator">Калькулятор</a><a href="#method">Методика</a><a href="#faq">Вопросы</a><a href="#privacy">Данные</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top" class="wrap">
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> Инструмент для продавцов техники</div>
+    <h1>Сколько реально остаётся с продажи?</h1>
+    <p>Посчитайте чистую прибыль после закупки, комиссий, налогов и дополнительных расходов. Сравните наличные, эквайринг и оплату частями при одной цене продажи.</p>
+    <div class="hero-note">Расчёты выполняются прямо в браузере · Без регистрации</div>
+  </section>
+
+  <section id="calculator" class="layout" aria-label="Калькулятор прибыли">
+    <div class="panel">
+      <div class="panel-head"><h2>Параметры продажи</h2><p>Введите свои цифры или измените демонстрационный пример.</p></div>
+      <div class="panel-body">
+        <div class="section-label">Товар и цена</div>
+        <div class="field-grid">
+          <div class="field full"><label for="productName">Название товара <span class="hint">необязательно</span></label><input id="productName" type="text" maxlength="90" value="Смартфон 128 ГБ (пример)" placeholder="Например, смартфон 256 ГБ"></div>
+          <div class="field"><label for="purchaseCost">Закупочная цена</label><div class="input-wrap"><input class="with-suffix money" id="purchaseCost" type="number" min="0" step="1" value="58000"><span class="suffix">₽</span></div></div>
+          <div class="field"><label for="sellingPrice">Цена продажи</label><div class="input-wrap"><input class="with-suffix money" id="sellingPrice" type="number" min="0" step="1" value="71900"><span class="suffix">₽</span></div></div>
+        </div>
+
+        <div class="section-label">Дополнительные расходы</div>
+        <div class="field-grid">
+          <div class="field"><label for="deliveryCost">Доставка / выдача</label><div class="input-wrap"><input class="with-suffix money" id="deliveryCost" type="number" min="0" step="1" value="600"><span class="suffix">₽</span></div></div>
+          <div class="field"><label for="packagingCost">Упаковка / аксессуары</label><div class="input-wrap"><input class="with-suffix money" id="packagingCost" type="number" min="0" step="1" value="450"><span class="suffix">₽</span></div></div>
+          <div class="field"><label for="warrantyReserve">Резерв на гарантию</label><div class="input-wrap"><input class="with-suffix money" id="warrantyReserve" type="number" min="0" step="1" value="1500"><span class="suffix">₽</span></div></div>
+          <div class="field"><label for="otherExpenses">Прочие расходы</label><div class="input-wrap"><input class="with-suffix money" id="otherExpenses" type="number" min="0" step="1" value="350"><span class="suffix">₽</span></div></div>
+        </div>
+
+        <div class="section-label">Налоговая модель</div>
+        <div class="field-grid">
+          <div class="field"><label for="taxRate">Ставка налога <span class="hint">пример</span></label><div class="input-wrap"><input class="with-suffix" id="taxRate" type="number" min="0" max="99.99" step="0.1" value="6"><span class="suffix">%</span></div></div>
+          <div class="field"><label for="taxBase">Налоговая база</label><select id="taxBase"><option value="revenue">С выручки</option><option value="profit">С прибыли до налога</option></select></div>
+        </div>
+        <div class="field" style="margin-top:13px"><label for="targetNetProfit">Желаемая чистая прибыль <span class="hint">необязательно</span></label><div class="input-wrap"><input class="with-suffix money" id="targetNetProfit" type="number" min="0" step="1" value="10000" placeholder="Например, 10 000"><span class="suffix">₽</span></div></div>
+
+        <div class="section-label">Комиссии способов оплаты <span class="hint">значения ниже — примеры, не тарифы банков</span></div>
+        <div class="fee-list">
+          <div class="fee-row"><div><div class="fee-name">Наличные</div><div class="fee-description">Без комиссии в примере</div></div><div class="fee-input"><input id="cashFee" type="number" min="0" max="99.99" step="0.1" value="0" aria-label="Комиссия наличных в процентах"><span>%</span></div></div>
+          <div class="fee-row"><div><div class="fee-name">Банковская карта / эквайринг</div><div class="fee-description">Укажите ставку своего договора</div></div><div class="fee-input"><input id="cardFee" type="number" min="0" max="99.99" step="0.1" value="2.5" aria-label="Комиссия эквайринга в процентах"><span>%</span></div></div>
+          <div class="fee-row"><div><div class="fee-name">Рассрочка / оплата частями</div><div class="fee-description">Укажите комиссию провайдера</div></div><div class="fee-input"><input id="installmentFee" type="number" min="0" max="99.99" step="0.1" value="6.5" aria-label="Комиссия оплаты частями в процентах"><span>%</span></div></div>
+        </div>
+        <div class="error-box" id="errors" role="alert"></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="saveBtn" type="button">Сохранить расчёт</button>
+          <button class="btn btn-secondary" id="csvBtn" type="button">Скачать CSV</button>
+          <button class="btn btn-quiet" id="sampleBtn" type="button">Пример</button>
+          <button class="btn btn-quiet" id="resetBtn" type="button">Сбросить</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head results-top"><div><h2>Результат сравнения</h2><p>Одна цена продажи — три способа оплаты.</p></div><span class="live">Пересчёт онлайн</span></div>
+      <div class="panel-body">
+        <div class="profit-summary">
+          <div class="summary-caption">Лучшая чистая прибыль</div>
+          <div class="summary-value" id="bestProfit">—</div>
+          <div class="summary-sub" id="bestLabel">Заполните параметры продажи</div>
+          <div class="summary-grid">
+            <div class="summary-metric"><span>Чистая маржа</span><strong id="bestMargin">—</strong></div>
+            <div class="summary-metric"><span>Все расходы</span><strong id="bestCosts">—</strong></div>
+          </div>
+        </div>
+        <div class="scenario-list" id="scenarioResults" aria-live="polite"></div>
+        <div class="result-actions"><span class="muted">Ставки можно менять под свой договор.</span><button class="btn btn-secondary btn-small" id="copyBtn" type="button">Копировать итог</button></div>
+        <div class="saved">
+          <div class="saved-head"><h3>Сохранённые расчёты</h3><span class="hint" id="savedCount">0 сценариев</span></div>
+          <div class="saved-list" id="savedList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="method" class="content-section">
+    <h2>Как считать чистую прибыль с продажи смартфона</h2>
+    <p class="intro">Цена на ценнике — ещё не заработок. Чтобы увидеть реальный результат, из выручки нужно вычесть закупку, расходы на сделку, комиссию платёжного способа и применимый налог.</p>
+    <div class="info-grid">
+      <article class="info-card"><div class="num">01 / ЗАКУПКА</div><h3>Начните с полной себестоимости</h3><p>Учитывайте закупочную цену, доставку, упаковку, аксессуары и разумный резерв на гарантийные случаи или возвраты.</p></article>
+      <article class="info-card"><div class="num">02 / ОПЛАТА</div><h3>Сравните комиссии</h3><p>Эквайринг и оплата частями могут заметно менять итог. Введите фактическую ставку из своего договора, а не ориентируйтесь на пример.</p></article>
+      <article class="info-card"><div class="num">03 / НАЛОГ</div><h3>Выберите правильную базу</h3><p>Налоговая база зависит от режима и правил учёта. Калькулятор показывает модель расчёта, но не определяет налоговый режим за вас.</p></article>
+    </div>
+    <div class="formula">
+      <p>Базовая модель расчёта</p>
+      <code>Комиссия = Цена продажи × Ставка комиссии</code>
+      <code>Прибыль до налога = Цена продажи − Все расходы − Комиссия</code>
+      <code>Налог с выручки = Цена продажи × Ставка налога</code>
+      <code>Налог с прибыли = max(0, Прибыль до налога) × Ставка налога</code>
+      <code>Чистая прибыль = Цена продажи − Все расходы − Комиссия − Налог</code>
+    </div>
+    <div class="disclaimer">МаржаЧек — независимый расчётный инструмент. Ставки комиссий по умолчанию приведены только для демонстрации и не являются тарифами конкретных банков или платёжных сервисов. Результаты ориентировочные и не заменяют бухгалтерскую, налоговую или юридическую консультацию. Проверьте налоговую базу и условия своего договора.</div>
+  </section>
+
+  <section id="faq" class="content-section">
+    <h2>Частые вопросы</h2>
+    <p class="intro">Коротко о том, что влияет на точность расчёта.</p>
+    <div class="faq-list">
+      <details><summary>Почему при оплате частями прибыль меньше?</summary><p>В калькуляторе комиссия провайдера вычитается из одной и той же цены продажи. Чем выше комиссия, тем меньше сумма, остающаяся продавцу. Фактические условия зависят от вашего договора.</p></details>
+      <details><summary>Какие расходы часто забывают?</summary><p>Доставку, упаковку, аксессуары, эквайринг, резерв на гарантийные случаи, возвраты и прочие затраты, которые возникают именно из-за этой продажи.</p></details>
+      <details><summary>Почему налог можно считать с выручки или прибыли?</summary><p>Это две разные расчётные модели, а не взаимозаменяемые варианты для любого бизнеса. Выбирайте базу только после проверки правил вашего налогового режима.</p></details>
+      <details><summary>Что показывает точка безубыточности?</summary><p>Минимальную цену продажи, при которой после учтённых расходов, комиссии и выбранной налоговой модели чистая прибыль равна нулю.</p></details>
+      <details><summary>Где хранятся сохранённые расчёты?</summary><p>В локальном хранилище браузера на вашем устройстве. Они не синхронизируются между устройствами и могут исчезнуть при очистке данных сайта.</p></details>
+    </div>
+  </section>
+
+  <section id="privacy" class="content-section">
+    <h2>Конфиденциальность</h2>
+    <p class="privacy-note">В этой версии нет регистрации, серверной базы данных, рекламных пикселей, аналитических счётчиков или сторонних скриптов. Значения калькулятора обрабатываются в браузере. Сохранённые сценарии записываются в localStorage на этом устройстве; сайт не отправляет их на сервер. При скачивании CSV файл создаётся локально в браузере. Хостинг Render может обрабатывать технические данные сетевого запроса для доставки и защиты сайта в соответствии со своей политикой. Очистка данных сайта в браузере удалит сохранённые сценарии.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">↗</span>МаржаЧек</a><div class="footer-copy">Независимый калькулятор прибыли · Все расчёты локально</div></div>
+    <nav class="footer-links" aria-label="Ссылки в подвале"><a href="#method">Методика</a><a href="#faq">Вопросы</a><a href="#privacy">Конфиденциальность</a></nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "marzhachek:scenarios:v2";
+  var ids = ["productName","purchaseCost","sellingPrice","deliveryCost","packagingCost","warrantyReserve","otherExpenses","taxRate","taxBase","targetNetProfit","cashFee","cardFee","installmentFee"];
+  var fmt = new Intl.NumberFormat("ru-RU",{style:"currency",currency:"RUB",maximumFractionDigits:0});
+  var fmtPct = new Intl.NumberFormat("ru-RU",{minimumFractionDigits:1,maximumFractionDigits:1});
+  var defaults = {productName:"Смартфон 128 ГБ (пример)",purchaseCost:58000,sellingPrice:71900,deliveryCost:600,packagingCost:450,warrantyReserve:1500,otherExpenses:350,taxRate:6,taxBase:"revenue",targetNetProfit:10000,cashFee:0,cardFee:2.5,installmentFee:6.5};
+  var current = null;
+  var scenarioMeta = [{id:"cash",label:"Наличные",fee:"cashFee"},{id:"card",label:"Банковская карта / эквайринг",fee:"cardFee"},{id:"installment",label:"Рассрочка / оплата частями",fee:"installmentFee"}];
+  function el(id){return document.getElementById(id);}
+  function val(id){var node=el(id);if(!node)return 0;if(node.tagName==="SELECT")return node.value;var n=Number(node.value);return node.value.trim()===""?0:n;}
+  function rub(n){return Number.isFinite(n)?fmt.format(Math.round(n)):"—";}
+  function pct(n){return Number.isFinite(n)?fmtPct.format(n)+"%":"—";}
+  function readInput(){var o={};ids.forEach(function(id){o[id]=id==="productName"||id==="taxBase"?el(id).value:val(id);});return o;}
+  function writeInput(o){ids.forEach(function(id){if(o[id]!==undefined&&o[id]!==null)el(id).value=o[id];else el(id).value="";});calculate();}
+  function validate(x){
+    var errors=[];
+    ["purchaseCost","sellingPrice","deliveryCost","packagingCost","warrantyReserve","otherExpenses","taxRate","targetNetProfit","cashFee","cardFee","installmentFee"].forEach(function(k){
+      if(!Number.isFinite(x[k])||x[k]<0)errors.push("Поле «"+labelFor(k)+"» должно быть неотрицательным числом.");
+    });
+    ["taxRate","cashFee","cardFee","installmentFee"].forEach(function(k){if(x[k]>=100)errors.push("Ставка в поле «"+labelFor(k)+"» должна быть меньше 100%.");});
+    if(x.taxBase==="revenue" && x.taxRate+x.cashFee>=100){} 
+    return errors;
+  }
+  function labelFor(k){return ({purchaseCost:"Закупочная цена",sellingPrice:"Цена продажи",deliveryCost:"Доставка",packagingCost:"Упаковка",warrantyReserve:"Резерв на гарантию",otherExpenses:"Прочие расходы",taxRate:"Ставка налога",targetNetProfit:"Целевая прибыль",cashFee:"Комиссия наличных",cardFee:"Комиссия эквайринга",installmentFee:"Комиссия оплаты частями"})[k]||k;}
+  function solve(fixed,fee,tax,base,target){
+    if(base==="revenue"){
+      var d=1-fee-tax;
+      if(d<=1e-9)return {value:null,error:"Сумма комиссии и налога с выручки должна быть меньше 100%."};
+      return {value:(fixed+(target||0))/d,error:null};
+    }
+    var keep=1-fee;
+    if(keep<=1e-9)return {value:null,error:"Комиссия должна быть меньше 100%."};
+    if(target===null||target===0)return {value:fixed/keep,error:null};
+    if(1-tax<=1e-9)return {value:null,error:"При налоге 100% положительная чистая прибыль недостижима."};
+    return {value:(fixed+target/(1-tax))/keep,error:null};
+  }
+  function calculateModel(x){
+    var fixed=x.purchaseCost+x.deliveryCost+x.packagingCost+x.warrantyReserve+x.otherExpenses;
+    var p=x.sellingPrice, taxRate=x.taxRate/100;
+    var list=scenarioMeta.map(function(m){
+      var feePercent=x[m.fee], feeRate=feePercent/100, fee=p*feeRate;
+      var preTax=p-fixed-fee;
+      var tax=x.taxBase==="revenue"?p*taxRate:Math.max(0,preTax)*taxRate;
+      var total=fixed+fee+tax, profit=p-total;
+      var breakEven=solve(fixed,feeRate,taxRate,x.taxBase,0);
+      var target=x.targetNetProfit===0?null:solve(fixed,feeRate,taxRate,x.taxBase,x.targetNetProfit);
+      return {id:m.id,label:m.label,feePercent:feePercent,fee:fee,tax:tax,total:total,profit:profit,margin:p>0?profit/p*100:null,breakEven:breakEven,target:target};
+    });
+    var best=Math.max.apply(null,list.map(function(s){return s.profit;}));
+    list.forEach(function(s){s.best=Math.abs(s.profit-best)<.005;});
+    return {fixed:fixed,list:list,best:best};
+  }
+  function calculate(){
+    var x=readInput(), errors=validate(x), errorBox=el("errors");
+    if(x.taxBase==="revenue"){
+      scenarioMeta.forEach(function(m){if(x.taxRate+x[m.fee]>=100)errors.push("Комиссия и налог с выручки для способа «"+m.label+"» в сумме должны быть меньше 100%.");});
+    }
+    if(errors.length){errorBox.style.display="block";errorBox.textContent=Array.from(new Set(errors)).join(" ");el("scenarioResults").innerHTML="";el("bestProfit").textContent="—";el("bestLabel").textContent="Исправьте значения в полях";el("bestMargin").textContent="—";el("bestCosts").textContent="—";current=null;return;}
+    errorBox.style.display="none";errorBox.textContent="";
+    var result=calculateModel(x);current={input:x,result:result};
+    var bestList=result.list.filter(function(s){return s.best;});
+    var bestName=bestList.map(function(s){return s.label;}).join(", ");
+    el("bestProfit").textContent=rub(result.best);
+    el("bestProfit").style.color=result.best<0?"#ffb8b2":"#fff";
+    el("bestLabel").textContent="Лучший способ: "+bestName;
+    var best=bestList[0];
+    el("bestMargin").textContent=pct(best.margin);
+    el("bestCosts").textContent=rub(best.total);
+    el("scenarioResults").innerHTML=result.list.map(function(s){
+      var be=s.breakEven.value===null?s.breakEven.error:rub(s.breakEven.value);
+      var target=s.target?(s.target.value===null?s.target.error:rub(s.target.value)):"Не задана";
+      return '<article class="scenario '+(s.best?"best":"")+'"><div class="scenario-head"><div><div class="scenario-title">'+s.label+'</div><div class="scenario-fee">Комиссия '+pct(s.feePercent)+' · '+rub(s.fee)+'</div></div>'+(s.best?'<span class="best-tag">ЛУЧШИЙ РЕЗУЛЬТАТ</span>':'')+'</div><div class="scenario-profit '+(s.profit<0?"negative":"")+'">'+rub(s.profit)+'</div><div class="scenario-grid"><div><span>Налог</span><strong>'+rub(s.tax)+'</strong></div><div><span>Все расходы</span><strong>'+rub(s.total)+'</strong></div><div><span>Маржа</span><strong>'+pct(s.margin)+'</strong></div></div><div class="scenario-foot">Безубыточность: '+be+'<br>Цена для целевой прибыли: '+target+'</div></article>';
+    }).join("");
+  }
+  function getSaved(){try{var raw=localStorage.getItem(STORAGE_KEY);var a=raw?JSON.parse(raw):[];return Array.isArray(a)?a.filter(function(s){return s&&typeof s.id==="string"&&typeof s.name==="string"&&s.input&&typeof s.input==="object";}):[];}catch(e){return [];}}
+  function putSaved(a){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(a));}catch(e){alert("Браузер не разрешил сохранить расчёт. Проверьте настройки хранилища.");}}
+  function renderSaved(){
+    var list=getSaved();el("savedCount").textContent=list.length+" сценариев";
+    if(!list.length){el("savedList").innerHTML='<div class="empty">Здесь появятся ваши сохранённые расчёты. Они останутся только в этом браузере.</div>';return;}
+    el("savedList").innerHTML=list.map(function(s){
+      var summary=calculateModel(s.input), profit=summary.best;
+      return '<div class="saved-item"><div class="saved-item-main"><div class="saved-item-name">'+escapeHtml(s.name)+'</div><div class="saved-item-meta">Цена '+rub(s.input.sellingPrice)+' · прибыль '+rub(profit)+'</div></div><div class="saved-item-actions"><button class="icon-btn" data-action="load" data-id="'+s.id+'" aria-label="Открыть '+escapeHtml(s.name)+'" title="Открыть">↗</button><button class="icon-btn" data-action="rename" data-id="'+s.id+'" aria-label="Переименовать '+escapeHtml(s.name)+'" title="Переименовать">✎</button><button class="icon-btn" data-action="duplicate" data-id="'+s.id+'" aria-label="Дублировать '+escapeHtml(s.name)+'" title="Дублировать">＋</button><button class="icon-btn" data-action="delete" data-id="'+s.id+'" aria-label="Удалить '+escapeHtml(s.name)+'" title="Удалить">×</button></div></div>';
+    }).join("");
+  }
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function save(){
+    if(!current){alert("Сначала исправьте ошибки в расчёте.");return;}
+    var x=current.input, name=x.productName.trim()||"Расчёт без названия";
+    var list=getSaved();var item={id:makeId(),name:name,updatedAt:new Date().toISOString(),input:x};
+    list.unshift(item);putSaved(list);renderSaved();
+  }
+  function makeId(){return (window.crypto&&crypto.randomUUID)?crypto.randomUUID():"sc-"+Date.now()+"-"+Math.floor(Math.random()*100000);}
+  function csvCell(v){var s=String(v===null||v===undefined?"":v);if(/^[=+\-@]/.test(s))s="'"+s;if(/[;"\r\n]/.test(s))s='"'+s.replace(/"/g,'""')+'"';return s;}
+  function csvNumber(v){return Number.isFinite(v)?v.toFixed(2).replace(".",","):"";}
+  function exportCsv(){
+    if(!current){alert("Сначала исправьте ошибки в расчёте.");return;}
+    var x=current.input,r=current.result,base=x.taxBase==="revenue"?"С выручки":"С прибыли до налога";
+    var head=["Товар","Способ оплаты","Цена продажи, ₽","Закупка, ₽","Дополнительные расходы, ₽","Комиссия, %","Комиссия, ₽","База налога","Ставка налога, %","Налог, ₽","Все расходы, ₽","Чистая прибыль, ₽","Чистая маржа, %","Точка безубыточности, ₽","Целевая прибыль, ₽","Цена для целевой прибыли, ₽","Лучший сценарий"];
+    var rows=r.list.map(function(s){return [x.productName||"Без названия",s.label,csvNumber(x.sellingPrice),csvNumber(x.purchaseCost),csvNumber(r.fixed),csvNumber(s.feePercent),csvNumber(s.fee),base,csvNumber(x.taxRate),csvNumber(s.tax),csvNumber(s.total),csvNumber(s.profit),csvNumber(s.margin),csvNumber(s.breakEven.value),csvNumber(x.targetNetProfit),csvNumber(s.target?s.target.value:null),s.best?"Да":"Нет"];});
+    var csv="\uFEFF"+[head].concat(rows).map(function(row){return row.map(csvCell).join(";");}).join("\r\n");
+    var blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="marzhachek-sravnenie.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  }
+  function copyResult(){
+    if(!current){alert("Сначала исправьте ошибки в расчёте.");return;}
+    var lines=["МаржаЧек — сравнение способов оплаты","Товар: "+(current.input.productName||"Без названия"),"Цена продажи: "+rub(current.input.sellingPrice)];
+    current.result.list.forEach(function(s){lines.push(s.label+": чистая прибыль "+rub(s.profit)+", комиссия "+rub(s.fee)+", налог "+rub(s.tax)+", маржа "+pct(s.margin));});
+    var text=lines.join("\n");
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){el("copyBtn").textContent="Скопировано";setTimeout(function(){el("copyBtn").textContent="Копировать итог";},1600);}).catch(function(){window.prompt("Скопируйте результат:",text);});}
+    else window.prompt("Скопируйте результат:",text);
+  }
+  function loadSample(){writeInput(defaults);}
+  function reset(){var blank={productName:"",purchaseCost:0,sellingPrice:0,deliveryCost:0,packagingCost:0,warrantyReserve:0,otherExpenses:0,taxRate:0,taxBase:"revenue",targetNetProfit:0,cashFee:0,cardFee:0,installmentFee:0};writeInput(blank);}
+  ids.forEach(function(id){el(id).addEventListener("input",calculate);el(id).addEventListener("change",calculate);});
+  el("saveBtn").addEventListener("click",save);
+  el("csvBtn").addEventListener("click",exportCsv);
+  el("copyBtn").addEventListener("click",copyResult);
+  el("sampleBtn").addEventListener("click",loadSample);
+  el("resetBtn").addEventListener("click",reset);
+  el("savedList").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-action]");if(!b)return;
+    var list=getSaved(),id=b.getAttribute("data-id"),action=b.getAttribute("data-action"),item=list.find(function(s){return s.id===id;});if(!item)return;
+    if(action==="load"){writeInput(item.input);window.scrollTo({top:el("calculator").offsetTop-80,behavior:"smooth"});}
+    if(action==="rename"){var name=window.prompt("Новое название расчёта:",item.name);if(name&&name.trim()){item.name=name.trim().slice(0,90);item.updatedAt=new Date().toISOString();putSaved(list);renderSaved();}}
+    if(action==="duplicate"){var copy={id:makeId(),name:item.name+" (копия)",updatedAt:new Date().toISOString(),input:item.input};list.unshift(copy);putSaved(list);renderSaved();}
+    if(action==="delete"){if(window.confirm("Удалить расчёт «"+item.name+"»?")){putSaved(list.filter(function(s){return s.id!==id;}));renderSaved();}}
+  });
+  calculate();renderSaved();
+})();
+</script>
+</body>
+</html>
